@@ -2,7 +2,7 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import numpy as np
 
 st.set_page_config(page_title="Laby's Miracle - Normal Equity Screener", layout="wide")
@@ -30,6 +30,9 @@ STOCKS = [
     "UPL.NS", "VEDL.NS", "VOLTAS.NS", "WIPRO.NS", "YESBANK.NS", "ZOMATO.NS"
 ]
 TIMEFRAME = "5m" 
+
+# Set up IST Timezone Rule
+IST = timezone(timedelta(hours=5, minutes=30))
 
 def calculate_indicators(df):
     v = df['Volume']
@@ -108,7 +111,9 @@ for index, ticker in enumerate(STOCKS):
     my_bar.progress((index + 1) / len(STOCKS), text=f"Analyzing {ticker.replace('.NS', '')}...")
 
 my_bar.empty()
-st.subheader(f"Last Market Scan: {datetime.now().strftime('%H:%M:%S')}")
+
+# FORCE THE CLOCK TO DISPLAY IST
+st.subheader(f"Last Market Scan: {datetime.now(IST).strftime('%I:%M:%S %p')} (IST)")
 
 if not all_data:
     st.error("⚠️ The Scanner is empty. Waiting for market data...")
