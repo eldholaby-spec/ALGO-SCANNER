@@ -5,23 +5,29 @@ import time
 from datetime import datetime
 import numpy as np
 
-st.set_page_config(page_title="Laby's Miracle - Trend", layout="wide")
+st.set_page_config(page_title="Laby's Miracle - Normal Equity Screener", layout="wide")
 
+# --- NIFTY 200 & RETAIL FAVORITES (Normal Cash Market) ---
 STOCKS = [
-    "ADANIENT.NS", "ADANIPORTS.NS", "APOLLOHOSP.NS", "ASIANPAINT.NS", "AXISBANK.NS", 
-    "BAJAJ-AUTO.NS", "BAJFINANCE.NS", "BAJAJFINSV.NS", "BEL.NS", "BPCL.NS", 
-    "BHARTIARTL.NS", "BRITANNIA.NS", "CIPLA.NS", "COALINDIA.NS", "DIVISLAB.NS", 
-    "DRREDDY.NS", "EICHERMOT.NS", "GRASIM.NS", "HCLTECH.NS", "HDFCBANK.NS", 
-    "HDFCLIFE.NS", "HEROMOTOCO.NS", "HINDALCO.NS", "HINDUNILVR.NS", "ICICIBANK.NS", 
-    "ITC.NS", "INDUSINDBK.NS", "INFY.NS", "JSWSTEEL.NS", "KOTAKBANK.NS", 
-    "LT.NS", "LTIM.NS", "MARUTI.NS", "NESTLEIND.NS", 
-    "NTPC.NS", "ONGC.NS", "POWERGRID.NS", "RELIANCE.NS", "SBILIFE.NS", 
-    "SBIN.NS", "SHRIRAMFIN.NS", "SUNPHARMA.NS", "TCS.NS", "TATACONSUM.NS", 
-    "TATASTEEL.NS", "TECHM.NS", "TITAN.NS", "TRENT.NS",
-    "TATAPOWER.NS", "WIPRO.NS", "HINDPETRO.NS", "VEDL.NS", "GAIL.NS", 
-    "BHEL.NS", "BANDHANBNK.NS", "MARICO.NS", "DABUR.NS", "AMBUJACEM.NS", 
-    "BIOCON.NS", "IDFCFIRSTB.NS", "PNB.NS", "SAIL.NS",
-    "CHOLAFIN.NS", "LICHSGFIN.NS", "TATACHEM.NS", "NATIONALUM.NS", "RECLTD.NS"
+    "ADANIENT.NS", "ADANIPORTS.NS", "ADANIPOWER.NS", "AMBUJACEM.NS", "ANGELONE.NS", 
+    "APOLLOHOSP.NS", "ASIANPAINT.NS", "AXISBANK.NS", "BAJAJ-AUTO.NS", "BAJFINANCE.NS", 
+    "BANKBARODA.NS", "BEL.NS", "BHEL.NS", "BHARTIARTL.NS", "BSE.NS", "BPCL.NS", 
+    "CDSL.NS", "CHOLAFIN.NS", "CIPLA.NS", "COALINDIA.NS", "COCHINSHIP.NS", 
+    "CUMMINSIND.NS", "DABUR.NS", "DIXON.NS", "DLF.NS", "DRREDDY.NS", "EICHERMOT.NS", 
+    "FACT.NS", "GAIL.NS", "GMRINFRA.NS", "GRASIM.NS", "HAL.NS", "HAVELLS.NS", 
+    "HCLTECH.NS", "HDFCBANK.NS", "HEROMOTOCO.NS", "HINDALCO.NS", "HINDCOPPER.NS", 
+    "HINDPETRO.NS", "HINDUNILVR.NS", "HUDCO.NS", "ICICIBANK.NS", "IDFCFIRSTB.NS", 
+    "IEX.NS", "INDHOTEL.NS", "INDIGO.NS", "INDUSINDBK.NS", "INFY.NS", "IOC.NS", 
+    "IREDA.NS", "IRFC.NS", "IRCTC.NS", "ITC.NS", "JINDALSTEL.NS", "JIOFIN.NS", 
+    "JSWSTEEL.NS", "KALYANKJIL.NS", "KOTAKBANK.NS", "KPITTECH.NS", "LT.NS", 
+    "LTIM.NS", "M&M.NS", "MARICO.NS", "MARUTI.NS", "MAZDOCK.NS", "MRF.NS", 
+    "NATIONALUM.NS", "NAUKRI.NS", "NESTLEIND.NS", "NHPC.NS", "NMDC.NS", "NTPC.NS", 
+    "NYKAA.NS", "ONGC.NS", "PAYTM.NS", "PFC.NS", "PNB.NS", "POLYCAB.NS", "POLICYBZR.NS", 
+    "POWERGRID.NS", "PUNITCOMM.NS", "RAILTEL.NS", "RECLTD.NS", "RELIANCE.NS", "RVNL.NS", 
+    "SAIL.NS", "SBIN.NS", "SJVN.NS", "SUZLON.NS", "SUNPHARMA.NS", "TATACHEM.NS", 
+    "TATACOMM.NS", "TATACONSUM.NS", "TATAELXSI.NS", "TATAMOTORS.NS", "TATAPOWER.NS", 
+    "TATASTEEL.NS", "TCS.NS", "TECHM.NS", "TITAN.NS", "TRENT.NS", "TVSMOTOR.NS", 
+    "UPL.NS", "VEDL.NS", "VOLTAS.NS", "WIPRO.NS", "YESBANK.NS", "ZOMATO.NS"
 ]
 TIMEFRAME = "5m" 
 
@@ -43,7 +49,6 @@ def calculate_indicators(df):
     ranges = pd.concat([high_low, high_close, low_close], axis=1)
     true_range = np.max(ranges, axis=1)
     df['ATR'] = true_range.rolling(14).mean()
-    
     return df
 
 def get_data_and_analyze(ticker):
@@ -78,8 +83,8 @@ def get_data_and_analyze(ticker):
 
         return {
             "Stock": ticker.replace(".NS", ""),
-            "Entry (Price)": round(entry, 2),
-            "Target (Exit)": round(target, 2),
+            "Price": round(entry, 2),
+            "Target": round(target, 2),
             "Stop Loss": round(stop_loss, 2),
             "RSI": round(float(latest['RSI']), 1),
             "Bias": bias
@@ -87,14 +92,14 @@ def get_data_and_analyze(ticker):
     except Exception as e:
         return None
 
-st.title("✨ Laby's Miracle: The Elite 5")
-st.write("Ranked by highest momentum using **VWAP, EMA 50, and RSI**.")
+st.title("✨ Laby's Miracle: Normal Equity Screener")
+st.write("Scanning high-volume NSE cash stocks, ranked by momentum.")
 
 st.sidebar.header("Controls")
-auto_refresh = st.sidebar.checkbox("Auto-Scan Every 60s", value=True)
+auto_refresh = st.sidebar.checkbox("Auto-Scan Every 90s", value=True)
 
 all_data = []
-my_bar = st.progress(0, text="Laby's Miracle is hunting for setups... Please wait.")
+my_bar = st.progress(0, text="Laby's Miracle is downloading market data... Please wait.")
 
 for index, ticker in enumerate(STOCKS):
     result = get_data_and_analyze(ticker)
@@ -109,24 +114,49 @@ if not all_data:
     st.error("⚠️ The Scanner is empty. Waiting for market data...")
 else:
     df_all = pd.DataFrame(all_data)
-    bullish_df = df_all[df_all['Bias'] == 'BULLISH'].sort_values(by='RSI', ascending=False).head(5)
-    bearish_df = df_all[df_all['Bias'] == 'BEARISH'].sort_values(by='RSI', ascending=True).head(5)
     
+    bullish_all = df_all[df_all['Bias'] == 'BULLISH'].sort_values(by='RSI', ascending=False)
+    bearish_all = df_all[df_all['Bias'] == 'BEARISH'].sort_values(by='RSI', ascending=True)
+    
+    bullish_600 = bullish_all[bullish_all['Price'] < 600]
+    bearish_600 = bearish_all[bearish_all['Price'] < 600]
+
+    st.markdown("---")
+    st.markdown("### 🌐 SECTIONS 1 & 2: ALL NORMAL NSE STOCKS")
     col1, col2 = st.columns(2)
+    
     with col1:
-        st.success("🟢 TOP 5 BUYS (Strongest Upward Momentum)")
-        if not bullish_df.empty:
-            st.dataframe(bullish_df[['Stock', 'Entry (Price)', 'Target (Exit)', 'Stop Loss']], hide_index=True, use_container_width=True)
+        st.success("1. 🟢 BUY (All Stocks - Highest RSI)")
+        if not bullish_all.empty:
+            st.dataframe(bullish_all[['Stock', 'Price', 'Target', 'Stop Loss', 'RSI']].head(10), hide_index=True, use_container_width=True)
         else:
-            st.write("No strong bullish setups right now.")
+            st.write("No bullish setups.")
             
     with col2:
-        st.error("🔴 TOP 5 SHORTS (Strongest Downward Momentum)")
-        if not bearish_df.empty:
-            st.dataframe(bearish_df[['Stock', 'Entry (Price)', 'Target (Exit)', 'Stop Loss']], hide_index=True, use_container_width=True)
+        st.error("2. 🔴 SELL/SHORT (All Stocks - Lowest RSI)")
+        if not bearish_all.empty:
+            st.dataframe(bearish_all[['Stock', 'Price', 'Target', 'Stop Loss', 'RSI']].head(10), hide_index=True, use_container_width=True)
         else:
-            st.write("No strong bearish setups right now.")
+            st.write("No bearish setups.")
+
+    st.markdown("---")
+    st.markdown("### 🪙 SECTIONS 3 & 4: STOCKS PRICED UNDER ₹600")
+    col3, col4 = st.columns(2)
+    
+    with col3:
+        st.success("3. 🟢 BUY (Under ₹600 - Highest RSI)")
+        if not bullish_600.empty:
+            st.dataframe(bullish_600[['Stock', 'Price', 'Target', 'Stop Loss', 'RSI']].head(10), hide_index=True, use_container_width=True)
+        else:
+            st.write("No cheap bullish setups.")
+            
+    with col4:
+        st.error("4. 🔴 SELL/SHORT (Under ₹600 - Lowest RSI)")
+        if not bearish_600.empty:
+            st.dataframe(bearish_600[['Stock', 'Price', 'Target', 'Stop Loss', 'RSI']].head(10), hide_index=True, use_container_width=True)
+        else:
+            st.write("No cheap bearish setups.")
 
 if auto_refresh:
-    time.sleep(60)
+    time.sleep(90)
     st.rerun()
